@@ -14,9 +14,9 @@ ThreePhase f3;
 int step=4;
 int psize=2;
 int mscale = 200;
-int zrange = 960;
+int zrange = 45;
 int zscale = 151;
-int zskew = 175;
+int zskew = 179;
 int znoise = 7200;
 int zblur = 16;
 float rotY = 0.0f;
@@ -36,16 +36,14 @@ void cbnoise(int v, void *)
 	int64 t2 = cv::getTickCount();
 	if ( zblur )
 		cv::blur(f3.mask,f3.mask,cv::Size(zblur,zblur));
-	//for (int b=0; b<zblur; ++b)
-	//{
-	//	cv::erode(f3.mask,f3.mask,cv::Mat());
-	//	cv::dilate(f3.mask,f3.mask,cv::Mat());
-	//}
 	int64 t3 = cv::getTickCount();
 	double freq= cv::getTickFrequency();
 	cerr << (t1-t0)/freq << "\t"<< (t2-t1)/freq << "\t"<< (t3-t2)/freq << "\t"<< (t3-t0)/freq << endl;
 }
 
+//
+// filter outliers in z dir
+//
 float meanz()
 {
 	int scale=zscale-mscale;
@@ -104,7 +102,10 @@ void drawpoints()
 }
 
 
+//
 // colored vertices quads, no real texture yet
+// outliers suck!
+//
 void drawmesh()
 {
 	int scale=zscale-mscale;
@@ -113,8 +114,7 @@ void drawmesh()
 		skew = 1;
 	int range = zrange;
 	float wn=6,hn=6;
-//	float mz = meanz();
-	float mz = 0;
+	float mz = meanz();
 	for ( int r=0; r<inputHeight-step; r+=step )
 	{
 		for ( int c=0; c<inputWidth-step; c+=step )
@@ -162,8 +162,6 @@ void drawmesh()
 			glVertex3f(0.01f*px, -0.01f*py, 0.01f*pz);
 
 			glEnd();
-
-			mz = pz;
 		}
 	}
 }
@@ -174,7 +172,7 @@ void appInit()
 	glEnable(GL_DEPTH_TEST);
 	reshape(400,400);
 
-	f3.setup("data/b/");
+	f3.setup("data/m/");
 
 	cbnoise(znoise,0);
 
