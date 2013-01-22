@@ -188,6 +188,22 @@ void appInit()
 }
 
 
+void appDisplay()
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glLoadIdentity();
+	glTranslatef(posX,posY,posZ);
+	glRotatef(rotY,0,1,0);
+
+	if ( psize>0 ) 
+	{
+		drawpoints();
+	}
+	else 
+	{
+		drawmesh();
+	}						
+}
 
 void appIdle(void) 
 {
@@ -206,18 +222,8 @@ void appIdle(void)
 	cv::applyColorMap(dm, dmj, cv::COLORMAP_JET);	
 	cv::imshow("phase",dmj);
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glLoadIdentity();
-	glTranslatef(posX,posY,posZ);
-	glRotatef(rotY,0,1,0);
-	if ( psize>0 ) 
-	{
-		drawpoints();
-	}
-	else 
-	{
-		drawmesh();
-	}						
+
+	appDisplay();
 
 	int k = cv::waitKey(5);
 	if (k== 27) exit(0);
