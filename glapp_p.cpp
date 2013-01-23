@@ -26,13 +26,17 @@ float posZ = -8.0f;
 int inputWidth;
 int inputHeight;
 
+//
+// phase wrap / unwrap
+// also, blurring the mask helps a lot
+//
 void cbnoise(int v, void *)
 {
 	int64 t0 = cv::getTickCount();
 	float thresh = float(v)/10000.0f; 
 	f3.phaseWrap(thresh);
 	int64 t1 = cv::getTickCount();
-    f3.phaseUnwrap();
+	f3.phaseUnwrap();
 	int64 t2 = cv::getTickCount();
 	if ( zblur )
 		cv::blur(f3.mask,f3.mask,cv::Size(zblur,zblur));
@@ -172,7 +176,7 @@ void appInit()
 	glEnable(GL_DEPTH_TEST);
 	reshape(400,400);
 
-	f3.setup("data/m/");
+	f3.setup("data/a/");
 
 	cbnoise(znoise,0);
 
@@ -185,6 +189,7 @@ void appInit()
 	cv::createTrackbar("psize","uwrap",&psize,10);
 	cv::namedWindow("mask",0);
 	cv::namedWindow("phase",0);
+	cv::namedWindow("process",0);
 }
 
 
@@ -221,6 +226,8 @@ void appIdle(void)
 	cv::Mat dmj;
 	cv::applyColorMap(dm, dmj, cv::COLORMAP_JET);	
 	cv::imshow("phase",dmj);
+	cv::Mat pm; f3.process.convertTo(pm,CV_8UC1,200);
+	cv::imshow("process",pm );
 
 
 	appDisplay();

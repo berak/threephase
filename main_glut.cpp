@@ -1,13 +1,4 @@
-#ifdef WIN32
-#include <windows.h>
-#endif
-
-
 #include "glapp.h"
-
-#include <stdio.h>
-#include <math.h>
-#include <assert.h>
 #include "glut.h"
 
 
